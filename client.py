@@ -26,4 +26,4 @@ if __name__ == "__main__":
         message = server.recv(4096)
         print(message.decode("utf-8"))
     server.close()
-# TODO http 1.1 & bonus & fix a bug in multithreading
+# TODO http 1.1 & bonus
