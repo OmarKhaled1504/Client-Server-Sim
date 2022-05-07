@@ -10,6 +10,10 @@ def threaded(client):
     while True:
         request = client.recv(4096)
         request = request.decode("utf-8")
+        if not request:
+            print('Connection closed')
+            print_lock.release()
+            break
         request_type, filename = parse(request)
         message = "HTTP/1.0 200 OK\r\n"
         if request_type == "get":
@@ -21,11 +25,11 @@ def threaded(client):
             client.sendall(bytes(message, "utf-8"))
         elif request_type == "post":
             data = request.split()[-1]
-            print(f"HTTP/1.0 200 OK\r\ndata: {data}")
+            print(f"data: {data}")
             with open(f"client to server files/{request.split()[1]}", 'w') as f:
                 f.write(data)
             client.sendall(bytes(message, "utf-8"))
-        client.close()
+    client.close()
 
 
 def parse(request):
@@ -45,7 +49,7 @@ if __name__ == "__main__":
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((ip, port))
     print("Server started")
-    print("socket binded to port", port)
+    print("socket bound to port", port)
     print("Waiting for client request..")
     server.listen()
     while True:

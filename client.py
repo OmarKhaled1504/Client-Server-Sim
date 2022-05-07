@@ -14,7 +14,6 @@ if __name__ == "__main__":
         filename = command.split()[1]
         if command.split()[0] == "GET":
             server.sendall(bytes(command, "utf-8"))
-            print('.')
         elif command.split()[0] == "POST":
             try:
                 f = open(f"client files/{filename}", mode='r')
