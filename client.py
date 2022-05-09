@@ -1,4 +1,5 @@
 import socket
+from time import sleep
 
 if __name__ == "__main__":
 
@@ -7,14 +8,22 @@ if __name__ == "__main__":
         commands = [command.rstrip() for command in commands]
 
     for command in commands:
-        ip = command.split()[4].split(':')[0]
-        port = int(command.split()[4].split(':')[1])
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.connect((ip, port))
-
+        server.settimeout(2)
+        try:
+            server.connect((command.split()[5].split(':')[0], int(command.split()[5].split(':')[1])))
+        except IndexError:
+            server.connect((command.split()[5].split(':')[0], 80))
         filename = command.split()[1][1:]
         if command.split()[0] == "GET":
             server.sendall(bytes(command, "utf-8"))
+            while True:
+                try:
+                    message = server.recv(4096)
+                    print(message.decode("utf-8"))
+                except socket.timeout:
+                    print("Server Timed Out\nConnection Closed")
+                    break
         elif command.split()[0] == "POST":
             try:
                 f = open(f"client files/{filename}", mode='r')
@@ -24,7 +33,13 @@ if __name__ == "__main__":
                 server.sendall(bytes(request, "utf-8"))
             except IOError:
                 print('file not found.')
-        message = server.recv(4096)
-        print(message.decode("utf-8"))
+            while True:
+                try:
+                    message = server.recv(4096)
+                    print(message.decode("utf-8"))
+                except socket.timeout:
+                    print("Server Timed Out\nConnection Closed")
+                    break
+        sleep(10)
         server.close()
-# TODO http 1.1 & bonus
+# TODO bonus

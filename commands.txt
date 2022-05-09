@@ -1,4 +1,4 @@
-GET /hello.txt HTTP/1.0 HOST: 127.0.0.1:1234
-POST /hello.txt HTTP/1.0 HOST: 127.0.0.1:1234
-GET /bye.txt HTTP/1.0 HOST: 127.0.0.1:1234
-POST /bye.txt HTTP/1.0 HOST: 127.0.0.1:1234
+GET /hello.txt HTTP/1.0 \r\n HOST: 127.0.0.1:80
+POST /hello.txt HTTP/1.0 \r\n HOST: 127.0.0.1:80
+GET /bye.txt HTTP/1.0 \r\n HOST: 127.0.0.1:80
+POST /bye.txt HTTP/1.0 \r\n HOST: 127.0.0.1

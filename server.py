@@ -7,7 +7,13 @@ print_lock = threading.Lock()
 
 def threaded(client):
     while True:
-        request = client.recv(4096)
+        try:
+            request = client.recv(4096)
+        except socket.timeout:
+            print_lock.release()
+            client.close()
+            print("Operation Timed Out\nConnection Closed")
+            break
         request = request.decode("utf-8")
         if not request:
             print('Connection closed')
@@ -38,13 +44,13 @@ def parse(request):
             return "get", filename
         elif request.split()[0] == 'POST':
             return "post", None
-    except:
+    except IndexError:
         return None, None
 
 
 if __name__ == "__main__":
     ip = "127.0.0.1"
-    port = 1234
+    port = 80
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((ip, port))
     print("Server started")
@@ -53,6 +59,6 @@ if __name__ == "__main__":
     server.listen()
     while True:
         client, address = server.accept()
+        client.settimeout(5)
         print_lock.acquire()
         start_new_thread(threaded, (client,))
-
