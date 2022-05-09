@@ -6,7 +6,6 @@ print_lock = threading.Lock()
 
 
 def threaded(client):
-    # data received from c
     while True:
         request = client.recv(4096)
         request = request.decode("utf-8")
@@ -26,7 +25,7 @@ def threaded(client):
         elif request_type == "post":
             data = request.split()[-1]
             print(f"data: {data}")
-            with open(f"client to server files/{request.split()[1]}", 'w') as f:
+            with open(f"client to server files/{request.split()[1][1:]}", 'w') as f:
                 f.write(data)
             client.sendall(bytes(message, "utf-8"))
     client.close()
@@ -35,7 +34,7 @@ def threaded(client):
 def parse(request):
     try:
         if request.split()[0] == 'GET':
-            filename = request.split()[1]
+            filename = request.split()[1][1:]
             return "get", filename
         elif request.split()[0] == 'POST':
             return "post", None
@@ -57,4 +56,3 @@ if __name__ == "__main__":
         print_lock.acquire()
         start_new_thread(threaded, (client,))
 
-    server.close()
