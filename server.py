@@ -9,16 +9,18 @@ def threaded(client):
     while True:
         try:
             request = client.recv(4096)
+            if not request:
+                print('Connection closed')
+                print_lock.release()
+                break
+            print(request)
         except socket.timeout:
             print_lock.release()
             client.close()
             print("Operation Timed Out\nConnection Closed")
             break
         request = request.decode("utf-8")
-        if not request:
-            print('Connection closed')
-            print_lock.release()
-            break
+
         request_type, filename = parse(request)
         message = "HTTP/1.0 200 OK\r\n"
         if request_type == "get":
@@ -59,6 +61,6 @@ if __name__ == "__main__":
     server.listen()
     while True:
         client, address = server.accept()
-        client.settimeout(5)
+        client.settimeout(10)
         print_lock.acquire()
         start_new_thread(threaded, (client,))
