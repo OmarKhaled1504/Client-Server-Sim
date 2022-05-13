@@ -23,7 +23,7 @@ def threaded(client):
 
         request_type, filename = parse(request)
         message = "HTTP/1.0 200 OK\r\n"
-        if request_type == "get":
+        if request_type == "get" and filename.split(".")[1] == "txt":
             try:
                 f = open(f"server files/{filename}", mode='r')
                 message = message + f.read() + "\r\n"
@@ -36,6 +36,14 @@ def threaded(client):
             with open(f"client to server files/{request.split()[1][1:]}", 'w') as f:
                 f.write(data)
             client.sendall(bytes(message, "utf-8"))
+        elif request_type == "get" and filename.split(".")[1] == "png":
+            f = open(f"server files/{filename}", mode='rb')
+            l = f.read(1024)
+            while l:
+                client.send(l)
+                l = f.read(1024)
+
+        #elif request_type == "post" and filename.split(".")[1] == "png":
     client.close()
 
 

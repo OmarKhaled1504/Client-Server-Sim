@@ -35,11 +35,21 @@ if __name__ == "__main__":
                 print('file not found in cache...\nrequesting from server...')
                 server.sendall(bytes(request, "utf-8"))
                 try:
-                    message = server.recv(4096)
-                    print(f'{message.decode("utf-8")}')
-                    with open(f"server to client files/{command.split()[1][1:]}", 'w') as f:
-                        f.write(message.decode("utf-8").split()[3])
-                        cache.update({command.split()[1][1:]: f.name})
+                    if filename.split(".")[1] == "txt":
+                          message = server.recv(4096)
+                          print(f'{message.decode("utf-8")}')
+                          with open(f"server to client files/{command.split()[1][1:]}", 'w') as f:
+                              f.write(message.decode("utf-8").split()[3])
+                              cache.update({command.split()[1][1:]: f.name})
+                    elif filename.split(".")[1] == "png":
+                        with open(f"server to client files/{command.split()[1][1:]}", 'wb') as f:
+                          while True:
+                            message = server.recv(1024)
+                            if not message:
+                             break
+                            else:
+                             f.write(message)
+                    print("image sent successfully")
                 except socket.timeout:
                     print("Server Timed Out\nConnection Closed")
                     break
