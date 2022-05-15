@@ -1,4 +1,5 @@
 import socket
+import sys
 from time import sleep
 from PIL import Image
 
@@ -10,7 +11,10 @@ def compose(request_type, filename, host, port):
 
 
 if __name__ == "__main__":
-    commands_file = input("Enter Commands File Name With Extension: ")
+    try:
+        commands_file = sys.argv[1]
+    except IndexError:
+        commands_file = input("Please enter commands file name with extension: ")
     try:
         with open(commands_file) as file:
             commands = file.readlines()

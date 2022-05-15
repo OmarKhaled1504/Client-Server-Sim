@@ -1,1 +1,2 @@
-POST cars.png 127.0.0.1 (80)
+GET hello.txt 127.0.0.1 (80)
+GET hello.txt 127.0.0.1 (80)
